@@ -16,7 +16,7 @@ async fn git_post_receive(request_body: web::Json<Value>) -> HttpResponse {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| App::new().service(git_post_receive))
-        .bind("127.0.0.1:9005")?
+        .bind("0.0.0.0:9005")?
         .run()
         .await
 }
