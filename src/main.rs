@@ -8,6 +8,13 @@ use serde_json::{json, Map, Value};
 use crypto::digest::Digest;
 use crypto::sha1::Sha1;
 
+
+extern crate openssl;
+extern crate hex;
+
+use openssl::sha;
+
+
 #[post("/git_post_receive")]
 async fn git_post_receive(req: HttpRequest, bytes: Bytes) -> HttpResponse {
     println!("REQ: {:?}", req);
@@ -17,7 +24,21 @@ async fn git_post_receive(req: HttpRequest, bytes: Bytes) -> HttpResponse {
     hasher.input_str("helloaaa");
     hasher.input(&bytes);
     let hex = hasher.result_str();
-    println!("aa: {:?}", hex);
+    println!("00: {:?}", hex);
+
+    let mut hasher = Sha1::new();
+    hasher.input(&bytes);
+    hasher.input_str("helloaaa");
+    let hex = hasher.result_str();
+    println!("11: {:?}", hex);
+
+
+    let mut hasher = sha::Sha1::new();
+    hasher.update(b"helloaaa");
+    hasher.update(&bytes);
+    let hash = hasher.finish();
+    println!("Hashed \"Hello, world\" to {}", hex::encode(hash));
+
 
 //    let mut hasher = Sha1::new();
 //    hasher.update(request_body.as_str().unwrap().as_bytes());
@@ -36,11 +57,25 @@ async fn git_post_receive(req: HttpRequest, bytes: Bytes) -> HttpResponse {
 
 #[post("/")]
 async fn index(req: HttpRequest, bytes: Bytes) -> HttpResponse {
+
+
     let mut hasher = Sha1::new();
     hasher.input_str("helloaaa");
     hasher.input(&bytes);
     let hex = hasher.result_str();
-    println!("aa: {:?}", hex);
+    println!("00: {:?}", hex);
+
+
+    let mut hasher = sha::Sha1::new();
+    hasher.update(b"helloaaa");
+    hasher.update(&bytes);
+
+    let hash = hasher.finish();
+    println!("aa: {}", hex::encode(hash));
+
+
+
+
 
     HttpResponse::Ok().body("hello")
 }
