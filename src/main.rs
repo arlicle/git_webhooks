@@ -3,7 +3,7 @@ use actix_web::web::{Bytes, post, Query};
 use serde_json::{json, Map, Value};
 use sha1::Sha1;
 use hmac::{Hmac, Mac, NewMac};
-
+use hex;
 
 type HmacSha1 = Hmac<Sha1>;
 
@@ -16,8 +16,7 @@ pub fn validate(secret: &[u8], signature: &[u8], message: &[u8]) -> bool {
 
     println!("signature: {:?}", signature);
     println!("code_bytes: {:?}", code_bytes);
-//    hmac.verify(signature).is_ok()
-    true
+    hmac.verify(signature).is_ok()
 }
 
 
@@ -39,8 +38,17 @@ async fn git_post_receive(req: HttpRequest, bytes: Bytes) -> HttpResponse {
     }
 
     println!("signature {}", signature);
+
+    let signature_bytes = match hex::decode(&signature) {
+        Ok(result) => result,
+        Err(error) => {
+            return HttpResponse::Ok().body("Failed");
+        }
+    };
+
+
     let secret = "helloaaa".as_bytes();
-    let r = validate(secret, signature.as_bytes(), &bytes[..]);
+    let r = validate(secret, signature_bytes, &bytes[..]);
     println!("result {}", r);
     HttpResponse::Ok().body("Done")
 }
