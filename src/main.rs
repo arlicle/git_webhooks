@@ -39,7 +39,8 @@ async fn git_post_receive(req: HttpRequest, bytes: Bytes) -> HttpResponse {
     }
 
     println!("signature {}", signature);
-    let r = validate(b"helloaaa", signature.as_bytes(), &bytes);
+    let secret = "helloaaa".as_bytes();
+    let r = validate(secret, signature.as_bytes(), &bytes[..]);
     println!("result {}", r);
     HttpResponse::Ok().body("Done")
 }
