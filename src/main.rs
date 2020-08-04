@@ -10,14 +10,7 @@ type HmacSha1 = Hmac<Sha1>;
 pub fn validate(secret: &[u8], signature: &[u8], message: &[u8]) -> bool {
     let mut hmac = HmacSha1::new_varkey(secret).unwrap();
     hmac.update(message);
-
-    let result = hmac.finalize();
-    let code_bytes = result.into_bytes();
-
-    println!("signature: {:?}", signature);
-    println!("code_bytes: {:?}", code_bytes);
-//    hmac.verify(signature).is_ok()
-    true
+    hmac.verify(signature).is_ok()
 }
 
 
