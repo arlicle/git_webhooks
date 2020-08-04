@@ -9,10 +9,10 @@ use crypto::digest::Digest;
 use crypto::sha1::Sha1;
 
 
-extern crate openssl;
-extern crate hex;
+//extern crate openssl;
+//extern crate hex;
 
-use openssl::sha;
+//use openssl::sha;
 
 
 #[post("/git_post_receive")]
@@ -33,11 +33,11 @@ async fn git_post_receive(req: HttpRequest, bytes: Bytes) -> HttpResponse {
     println!("11: {:?}", hex);
 
 
-    let mut hasher = sha::Sha1::new();
-    hasher.update(b"helloaaa");
-    hasher.update(&bytes);
-    let hash = hasher.finish();
-    println!("Hashed \"Hello, world\" to {}", hex::encode(hash));
+//    let mut hasher = sha::Sha1::new();
+//    hasher.update(b"helloaaa");
+//    hasher.update(&bytes);
+//    let hash = hasher.finish();
+//    println!("Hashed \"Hello, world\" to {}", hex::encode(hash));
 
 
 //    let mut hasher = Sha1::new();
@@ -66,12 +66,12 @@ async fn index(req: HttpRequest, bytes: Bytes) -> HttpResponse {
     println!("00: {:?}", hex);
 
 
-    let mut hasher = sha::Sha1::new();
-    hasher.update(b"helloaaa");
-    hasher.update(&bytes);
-
-    let hash = hasher.finish();
-    println!("aa: {}", hex::encode(hash));
+//    let mut hasher = sha::Sha1::new();
+//    hasher.update(b"helloaaa");
+//    hasher.update(&bytes);
+//
+//    let hash = hasher.finish();
+//    println!("aa: {}", hex::encode(hash));
 
 
 
