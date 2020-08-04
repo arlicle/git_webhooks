@@ -1,10 +1,7 @@
 use actix_web::{get, post, web, App, HttpRequest, HttpServer, HttpResponse};
 use actix_web::web::{Bytes, post, Query};
-
 use serde_json::{json, Map, Value};
-
 use sha1::Sha1;
-use sha2::Sha256;
 use hmac::{Hmac, Mac, NewMac};
 
 
@@ -40,19 +37,8 @@ async fn git_post_receive(req: HttpRequest, bytes: Bytes) -> HttpResponse {
     HttpResponse::Ok().body("Done")
 }
 
-#[post("/")]
+#[get("/")]
 async fn index(req: HttpRequest, bytes: Bytes) -> HttpResponse {
-
-
-
-
-//    let mut hasher = sha::Sha1::new();
-//    hasher.update(b"helloaaa");
-//    hasher.update(&bytes);
-//
-//    let hash = hasher.finish();
-//    println!("aa: {}", hex::encode(hash));
-
 
 
 
