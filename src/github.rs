@@ -16,8 +16,12 @@ type HmacSha1 = Hmac<Sha1>;
 
 #[derive(Serialize,Deserialize,Debug)]
 pub struct Info {
-    path: String,
+    cwd: Option<String>,
+    command: Option<String>,
+    branch: Option<String>,
 }
+
+
 
 
 pub fn validate(secret: &[u8], signature: &[u8], message: &[u8]) -> bool {
@@ -33,7 +37,6 @@ pub async fn webhooks_handle(req: HttpRequest, request_body: Bytes, query_info: 
     println!("REQ: {:?}", req.headers());
     println!("REQ: {:?}", request_body);
     println!("query {:?}", query_info);
-    println!("path {:?}", query_info.path);
     let config_data = config_data.lock().unwrap();
 
     let mut signature = "";
