@@ -40,7 +40,6 @@ pub async fn webhooks_handle(req: HttpRequest, request_body: web::Json<Value>, q
     println!("REQ: {:?}", request_body);
     println!("query {:?}", query_info);
 
-
     let config_data = config_data.lock().unwrap();
 
 
@@ -80,13 +79,7 @@ pub async fn webhooks_handle(req: HttpRequest, request_body: web::Json<Value>, q
         let secret = &config_data.get_project_config_data(repository_name, "secret")[0];
         let secret = secret.as_bytes();
 
-        let request_body_bytes = match request_body.as_str() {
-            Some(v) => v.as_bytes(),
-            None => {
-                return HttpResponse::Ok().body("no request body");
-            }
-        };
-        let r = validate(secret, &signature_bytes, request_body_bytes);
+        let r = validate(secret, &signature_bytes, request_body.to_string().as_bytes());
         println!("result {}", r);
         if !r {
             return HttpResponse::Ok().body("Signature valid failed");
