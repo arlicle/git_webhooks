@@ -34,7 +34,10 @@ pub fn validate(secret: &[u8], signature: &[u8], message: &[u8]) -> bool {
 
 
 
-pub async fn webhooks_handle(req: HttpRequest, request_body: web::Json<Value>, query_info: web::Query<Info>, config_data: web::Data<Mutex<config::Config>>) -> HttpResponse {
+pub async fn webhooks_handle(req: HttpRequest, request_body_bytes: Bytes, query_info: web::Query<Info>, config_data: web::Data<Mutex<config::Config>>) -> HttpResponse {
+    let request_body = std::str::from_utf8(&request_body_bytes[..]).unwrap();
+    let request_body:Value = serde_json::from_str(request_body).unwrap();
+
     println!("REQ: {:?}", req);
     println!("REQ: {:?}", req.headers());
     println!("REQ: {:?}", request_body);
@@ -79,7 +82,7 @@ pub async fn webhooks_handle(req: HttpRequest, request_body: web::Json<Value>, q
         let secret = &config_data.get_project_config_data(repository_name, "secret")[0];
         let secret = secret.as_bytes();
 
-        let r = validate(secret, &signature_bytes, request_body.to_string().as_bytes());
+        let r = validate(secret, &signature_bytes, &request_body_bytes[..]);
         println!("result {}", r);
         if !r {
             return HttpResponse::Ok().body("Signature valid failed");
