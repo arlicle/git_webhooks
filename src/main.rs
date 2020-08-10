@@ -9,15 +9,14 @@ use hex;
 use std::sync::Mutex;
 mod github;
 mod config;
-
+mod task;
 
 
 
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let config_data = config::Config::new();
-    let config_data = web::Data::new(Mutex::new(config_data));
+    let config_data = web::Data::new(Mutex::new(config::Config::new()));
     HttpServer::new(move|| App::new()
         .app_data(config_data.clone())
         .service(web::resource("/webhooks/git").route(web::post().to(github::webhooks_handle)))
