@@ -8,13 +8,19 @@ use hex;
 use std::sync::Mutex;
 mod github;
 mod config;
-mod task;
+mod executor;
 
 
 
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    let task = executor::Task::run();
+    task.send("cd /Users/edison/code/rust/git_webhooks");
+    task.send("git pull");
+    task.send("pwd");
+    task.send("ls");
+
     let config_data = web::Data::new(Mutex::new(config::Config::new()));
 
     HttpServer::new(move|| App::new()

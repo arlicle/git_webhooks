@@ -39,13 +39,6 @@ pub async fn webhooks_handle(req: HttpRequest, request_body_bytes: Bytes, query_
     let request_body:Value = serde_json::from_str(request_body).unwrap();
     let config_data = config_data.lock().unwrap();
 
-
-    println!("REQ: {:?}", req);
-    println!("REQ: {:?}", req.headers());
-    println!("REQ: {:?}", request_body);
-    println!("query {:?}", query_info);
-
-
     let mut signature = "";
     if let Some(v) = req.headers().get("x-hub-signature") {
         if let Ok(x) = v.to_str() {
