@@ -1,5 +1,5 @@
 use std::sync::Mutex;
-
+use std::process::Command;
 use actix_web::{get, post, web, App, HttpRequest, HttpServer, HttpResponse};
 use actix_web::web::{Bytes, Query};
 use serde_json::{json, Map, Value};
@@ -37,13 +37,13 @@ pub fn validate(secret: &[u8], signature: &[u8], message: &[u8]) -> bool {
 pub async fn webhooks_handle(req: HttpRequest, request_body_bytes: Bytes, query_info: web::Query<Info>, config_data: web::Data<Mutex<config::Config>>) -> HttpResponse {
     let request_body = std::str::from_utf8(&request_body_bytes[..]).unwrap();
     let request_body:Value = serde_json::from_str(request_body).unwrap();
+    let config_data = config_data.lock().unwrap();
+
 
     println!("REQ: {:?}", req);
     println!("REQ: {:?}", req.headers());
     println!("REQ: {:?}", request_body);
     println!("query {:?}", query_info);
-
-    let config_data = config_data.lock().unwrap();
 
 
     let mut signature = "";
@@ -59,7 +59,6 @@ pub async fn webhooks_handle(req: HttpRequest, request_body_bytes: Bytes, query_
             return HttpResponse::Ok().body("Cant not get repository name");
         }
     };
-    println!("repository_name {}", repository_name);
 
     let branch_url:&str = match request_body.pointer("/ref") {
         Some(Value::String(v)) => v,
@@ -68,9 +67,7 @@ pub async fn webhooks_handle(req: HttpRequest, request_body_bytes: Bytes, query_
         }
     };
     let branch_name = branch_url.replace("refs/heads/", "");
-    println!("branch_name {}", branch_name);
     if signature != "" {
-        println!("signature {}", signature);
 
         let signature_bytes = match hex::decode(&signature) {
             Ok(result) => result,
@@ -83,17 +80,34 @@ pub async fn webhooks_handle(req: HttpRequest, request_body_bytes: Bytes, query_
         let secret = secret.as_bytes();
 
         let r = validate(secret, &signature_bytes, &request_body_bytes[..]);
-        println!("result {}", r);
         if !r {
             return HttpResponse::Ok().body("Signature valid failed");
         }
     }
 
-    let commands = config_data.get_project_config_data(repository_name, "command");
-    for command in commands {
+    let mut commands = config_data.get_project_config_data(repository_name, "command");
+    if commands.len() == 1 && &commands[0] == "" {
+        match &query_info.command {
+            Some(v) => {
+                commands = vec![v.replace("+", " ")];
+            },
+            None => {
+                commands = vec![];
+            }
+        }
+    }
+
+    for command in &commands {
+        let s: Vec<&str> = command.split(" ").collect();
+        let mut echo_hello = Command::new(s[0]);
+        if s.len() > 1 {
+            echo_hello.args(&s[1..]);
+        }
+        let aaa = echo_hello.output().expect("failed to execute process");
+        let request_body = std::str::from_utf8(&aaa.stdout).unwrap();
+        println!("{}", request_body);
 
     }
 
-    println!("hello");
     HttpResponse::Ok().body("Done")
 }

@@ -1,4 +1,3 @@
-use std::process::Command;
 use actix_web::{get, post, web, App, HttpRequest, HttpServer, HttpResponse};
 use actix_web::web::{Bytes, Query};
 use serde_json::{json, Map, Value};
@@ -17,6 +16,7 @@ mod task;
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let config_data = web::Data::new(Mutex::new(config::Config::new()));
+
     HttpServer::new(move|| App::new()
         .app_data(config_data.clone())
         .service(web::resource("/webhooks/git").route(web::post().to(github::webhooks_handle)))
