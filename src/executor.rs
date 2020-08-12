@@ -39,13 +39,13 @@ impl Task {
     fn run_command(command:String) {
         println!("command {:?}", command);
         let s: Vec<&str> = command.split(" ").collect();
+
 //        let mut echo_hello = Command::new(s[0]);
 
         let mut aaa = Command::new("pwd").output().unwrap();
         let request_body = std::str::from_utf8(&aaa.stdout).unwrap();
         println!("output: {}", request_body);
-
-        let mut aaa = Command::new("cd").arg("/www/hekou_bigdata").output().unwrap();
+        let mut aaa = Command::new("git").arg("pull").current_dir("/www/hekou_bigdata").output().unwrap();
         let request_body = std::str::from_utf8(&aaa.stdout).unwrap();
         println!("output: {}", request_body);
 
