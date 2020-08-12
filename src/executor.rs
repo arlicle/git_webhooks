@@ -3,7 +3,7 @@ use std::thread;
 use crossbeam_channel::{unbounded,Sender,Receiver};
 
 pub struct Task {
-    pub sender:Sender<String>,
+    pub sender:Sender<Vec<String>>,
 
 }
 
@@ -14,11 +14,13 @@ impl Task {
         let tx1 = tx.clone();
 
         thread::spawn(move || {
-            for received_command in rx {
-                println!("received_command: {}", received_command);
-//                thread::spawn(move || {
-                Task::run_command(received_command);
-//                });
+            for received_commands in rx {
+                println!("received_command: {:?}", received_commands);
+                thread::spawn(move || {
+                    for command in received_commands {
+                        Task::run_command(command);
+                    }
+                });
             }
         });
 
@@ -27,8 +29,8 @@ impl Task {
         }
     }
 
-    pub fn send(&self, command:&str) {
-        self.sender.send(command.to_string()).unwrap();
+    pub fn send(&self, command:Vec<String>) {
+        self.sender.send(command).unwrap();
     }
 
     fn run_command(command:String) {

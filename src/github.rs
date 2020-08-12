@@ -104,9 +104,7 @@ pub async fn webhooks_handle(req: HttpRequest, request_body_bytes: Bytes, query_
     }
 
     println!("start run command");
-    for command in &commands {
-        task.send(command);
-    }
+    task.send(commands);
 
     HttpResponse::Ok().body("Done")
 }
