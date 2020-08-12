@@ -11,7 +11,7 @@ pub struct Config {
 }
 
 impl Config {
-    /// Load project config
+    /// Load repos config
     pub fn new() -> Self {
         let config_file = "config.json5";
         match fs::read_to_string(config_file) {
@@ -32,10 +32,10 @@ impl Config {
     }
 
 
-    /// get project config data
+    /// get repos config data
     pub fn get_config_data(&self, repository_name: &str, key: &str) -> Vec<String> {
         let mut vals: Vec<String> = Vec::new();
-        self.get_vals(&mut vals, self.data.pointer(&format!("/projects/{}/{}", repository_name, key)));
+        self.get_vals(&mut vals, self.data.pointer(&format!("/repos/{}/{}", repository_name, key)));
 
         // default is not inherit
         let mut is_inherit = false;
