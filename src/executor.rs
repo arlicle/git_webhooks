@@ -39,12 +39,13 @@ impl Task {
     fn run_command(command:String) {
         println!("command {:?}", command);
         let s: Vec<&str> = command.split(" ").collect();
-        let mut echo_hello = Command::new(s[0]);
-        if s.len() > 1 {
-            for arg in &s[1..] {
-                echo_hello.arg(arg);
-            }
-        }
+//        let mut echo_hello = Command::new(s[0]);
+        let mut echo_hello = Command::new("cd").arg("/www/hekou_bigdata");
+//        if s.len() > 1 {
+//            for arg in &s[1..] {
+//                echo_hello.arg(arg);
+//            }
+//        }
         let aaa = echo_hello.output().expect("failed to execute process");
         let request_body = std::str::from_utf8(&aaa.stdout).unwrap();
         println!("output: {}", request_body);
