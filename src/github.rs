@@ -53,27 +53,18 @@ pub async fn webhooks_handle(req: HttpRequest, request_body_bytes: Bytes, query_
     println!("request_body {:?}", request_body);
     println!("request_body {:?}", request_body.pointer("/repository/name"));
 
-    // 获取repository name
-     match request_body.pointer("/repository/name") {
-        Some(Value::String(v)) => {
-            println!("v {:?}", v);
-        },
-        Some(_) | None => {
-            return HttpResponse::Ok().body("Cant not get repository name");
-        }
-    };
 
 
     // 获取repository name
-    let repository_name: &str = match request_body.pointer("/repository/name") {
-        Some(Value::String(v)) => v,
+    let repository_name = match request_body.pointer("/repository/name") {
+        Some(Value::String(v)) => v.to_string(),
         Some(_) | None => {
             return HttpResponse::Ok().body("Cant not get repository name");
         }
     };
 
     // 获取配置文件中的branch name
-    let config_branch_name = config_data.get_config_data(repository_name, "branch");
+    let config_branch_name = config_data.get_config_data(&repository_name, "branch");
 
     // 获取当前请求的分支名称
     let branch_url: &str = match request_body.pointer("/ref") {
@@ -97,7 +88,7 @@ pub async fn webhooks_handle(req: HttpRequest, request_body_bytes: Bytes, query_
             }
         };
 
-        let secret = &config_data.get_config_data(repository_name, "secret")[0];
+        let secret = &config_data.get_config_data(&repository_name, "secret")[0];
         let secret = secret.as_bytes();
 
         let r = validate(secret, &signature_bytes, &request_body_bytes[..]);
@@ -106,7 +97,7 @@ pub async fn webhooks_handle(req: HttpRequest, request_body_bytes: Bytes, query_
         }
     }
 
-    let mut commands = config_data.get_config_data(repository_name, "command");
+    let mut commands = config_data.get_config_data(&repository_name, "command");
     if commands.len() == 1 && &commands[0] == "" {
         match &query_info.command {
             Some(v) => {
