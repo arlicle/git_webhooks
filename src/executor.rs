@@ -32,6 +32,7 @@ impl Task {
     }
 
     fn run_command(command:String) {
+        println!("command {:?}", command);
         let s: Vec<&str> = command.split(" ").collect();
         let mut echo_hello = Command::new(s[0]);
         if s.len() > 1 {
