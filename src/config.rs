@@ -33,9 +33,9 @@ impl Config {
 
 
     /// get project config data
-    pub fn get_project_config_data(&self, project_name: &str, key: &str) -> Vec<String> {
+    pub fn get_config_data(&self, repository_name: &str, key: &str) -> Vec<String> {
         let mut vals: Vec<String> = Vec::new();
-        self.get_vals(&mut vals, self.data.pointer(&format!("/projects/{}/{}", project_name, key)));
+        self.get_vals(&mut vals, self.data.pointer(&format!("/projects/{}/{}", repository_name, key)));
 
         // default is not inherit
         let mut is_inherit = false;

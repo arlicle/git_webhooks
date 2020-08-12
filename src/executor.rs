@@ -1,18 +1,17 @@
 use std::process::Command;
 use std::thread;
-use std::sync::mpsc;
+use crossbeam_channel::{unbounded,Sender,Receiver};
 
 pub struct Task {
-    pub sender:mpsc::Sender<String>,
+    pub sender:Sender<String>,
 
 }
 
 
 impl Task {
-    pub fn run() -> Self {
-        let (tx, rx):(mpsc::Sender<String>, mpsc::Receiver<String>) = mpsc::channel();
-        let tx1 = mpsc::Sender::clone(&tx);
-        let tx2 = mpsc::Sender::clone(&tx);
+    pub fn run() -> Task {
+        let (tx, rx) = unbounded();
+        let tx1 = tx.clone();
 
         thread::spawn(move || {
             for received_command in rx {
@@ -23,7 +22,7 @@ impl Task {
         });
 
         Task {
-            sender:tx2
+            sender:tx
         }
     }
 
