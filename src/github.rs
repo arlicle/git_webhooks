@@ -58,6 +58,21 @@ pub async fn webhooks_handle(req: HttpRequest, request_body_bytes: Bytes, query_
         }
     };
 
+    let mut cwd_vec = config_data.get_config_data(repository_name, "cwd");
+    if &cwd_vec[0] == "" {
+        match &query_info.cwd {
+            Some(s) => {
+                cwd_vec[0] = s.to_string();
+            },
+            None => ()
+        }
+    }
+
+    let cwd = cwd_vec[0].clone();
+    if &cwd == "" {
+        return HttpResponse::Ok().body("Cant not get cwd name");
+    }
+
     // 获取配置文件中的branch name
     let config_branch_name = config_data.get_config_data(repository_name, "branch");
 
@@ -95,12 +110,14 @@ pub async fn webhooks_handle(req: HttpRequest, request_body_bytes: Bytes, query_
     if commands.len() == 1 && &commands[0] == "" {
         match &query_info.command {
             Some(v) => {
-                commands = vec![v.replace("+", " ")];
+                commands = vec![cwd, v.replace("+", " ")];
             }
             None => {
-                commands = vec![];
+                commands = vec![cwd];
             }
         }
+    } else {
+        commands.insert(0, cwd);
     }
 
     println!("start run command");

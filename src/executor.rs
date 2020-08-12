@@ -21,6 +21,7 @@ impl Task {
                 println!("received_command: {:?}", received_commands);
                 let mut received_commands: Vec<String> = received_commands;
                 thread::spawn(move || {
+                    println!("received_command2: {:?}", received_commands);
                     let cwd = received_commands.remove(0);
                     for command in received_commands {
                         Task::run_command(command, &cwd);
