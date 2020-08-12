@@ -44,6 +44,7 @@ impl Task {
         let request_body = std::str::from_utf8(&aaa.stdout).unwrap();
         println!("output: {}", request_body);
         let mut aaa = Command::new("git").arg("pull").current_dir("/www/hekou_bigdata").output().unwrap();
+        let mut aaa = Command::new("ls").arg("-a").current_dir("/www/hekou_bigdata").output().unwrap();
         let request_body = std::str::from_utf8(&aaa.stdout).unwrap();
         println!("output: {}", request_body);
         println!("output: {}", request_body);
