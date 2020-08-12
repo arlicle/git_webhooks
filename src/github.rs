@@ -120,8 +120,6 @@ pub async fn webhooks_handle(req: HttpRequest, request_body_bytes: Bytes, query_
         commands.insert(0, cwd);
     }
 
-    println!("start run command");
     task.send(commands);
-
     HttpResponse::Ok().body("Done")
 }
