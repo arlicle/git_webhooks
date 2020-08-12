@@ -52,6 +52,18 @@ pub async fn webhooks_handle(req: HttpRequest, request_body_bytes: Bytes, query_
 
     println!("request_body {:?}", request_body);
     println!("request_body {:?}", request_body.pointer("/repository/name"));
+
+    // 获取repository name
+     match request_body.pointer("/repository/name") {
+        Some(v) => {
+            println!("v {:?}", v);
+        },
+        Some(_) | None => {
+            return HttpResponse::Ok().body("Cant not get repository name");
+        }
+    };
+
+
     // 获取repository name
     let repository_name: &str = match request_body.pointer("/repository/name") {
         Some(Value::String(v)) => v,
