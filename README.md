@@ -16,7 +16,7 @@
 ```.language-json5
 {
   secret: "xxxxxx", // 全局密钥
-  command: "git pull",
+  command: "git pull", 
   inherit: true, // 是否让子项目继承全局属性, 如果为false,  则repos里面的项目就不会继承全局属性
   repos: {
     // repository name 作为key
@@ -37,3 +37,16 @@
   }
 }
 ```
+
+如果所有项目都使用一个私钥，那么就在github webhooks中都url中配置参数就可以了，例如，config.json5文件可以这么配置：
+```.language-json5
+{
+  secret: "xxxxxx", // 全局密钥
+  command: "git pull", 
+  inherit: true, // 是否让子项目继承全局属性, 如果为false,  则repos里面的项目就不会继承全局属性
+}
+```
+
+webhooks 请求url里面可以增加参数：
+
+http://xxxx.com/webhooks/git?cwd=/www/respository_path&command=git+pull
