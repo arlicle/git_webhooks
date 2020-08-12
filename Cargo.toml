@@ -15,6 +15,8 @@ sha-1 = "0.9.1"
 hex = "0.4.2"
 json5 = "0.2.8"
 crossbeam-channel = "0.4.3"
+execute = "0.2.8"
+
 
 
 

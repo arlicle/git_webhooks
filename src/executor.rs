@@ -38,11 +38,13 @@ impl Task {
         let s: Vec<&str> = command.split(" ").collect();
         let mut echo_hello = Command::new(s[0]);
         if s.len() > 1 {
-            echo_hello.args(&s[1..]);
+            for arg in &s[1..] {
+                echo_hello.arg(arg);
+            }
         }
         let aaa = echo_hello.output().expect("failed to execute process");
         let request_body = std::str::from_utf8(&aaa.stdout).unwrap();
-        println!("{}", request_body);
+        println!("output: {}", request_body);
 
     }
 }
