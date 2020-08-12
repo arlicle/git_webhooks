@@ -10,8 +10,7 @@ use hmac::{Hmac, Mac, NewMac};
 use hex;
 
 
-use crossbeam_channel::{unbounded,Sender,Receiver};
-
+use crossbeam_channel::{unbounded, Sender, Receiver};
 
 
 use crate::config;
@@ -38,12 +37,9 @@ pub fn validate(secret: &[u8], signature: &[u8], message: &[u8]) -> bool {
 }
 
 
-
-
-
 pub async fn webhooks_handle(req: HttpRequest, request_body_bytes: Bytes, query_info: web::Query<Info>, config_data: web::Data<Mutex<config::Config>>, task: web::Data<executor::Task>) -> HttpResponse {
     let request_body = std::str::from_utf8(&request_body_bytes[..]).unwrap();
-    let request_body:Value = serde_json::from_str(request_body).unwrap();
+    let request_body: Value = serde_json::from_str(request_body).unwrap();
     let config_data = config_data.lock().unwrap();
 
     // 获取github signature
@@ -55,7 +51,7 @@ pub async fn webhooks_handle(req: HttpRequest, request_body_bytes: Bytes, query_
     }
 
     // 获取repository name
-    let repository_name:&str = match request_body.pointer("/repository/name") {
+    let repository_name: &str = match request_body.pointer("/repository/name") {
         Some(Value::String(v)) => v,
         Some(_) | None => {
             return HttpResponse::Ok().body("Cant not get repository name");
@@ -66,7 +62,7 @@ pub async fn webhooks_handle(req: HttpRequest, request_body_bytes: Bytes, query_
     let config_branch_name = config_data.get_config_data(repository_name, "branch");
 
     // 获取当前请求的分支名称
-    let branch_url:&str = match request_body.pointer("/ref") {
+    let branch_url: &str = match request_body.pointer("/ref") {
         Some(Value::String(v)) => v,
         Some(_) | None => {
             return HttpResponse::Ok().body("Cant not get repository name");
@@ -75,7 +71,7 @@ pub async fn webhooks_handle(req: HttpRequest, request_body_bytes: Bytes, query_
     let request_branch_name = branch_url.replace("refs/heads/", "");
 
     // 判断分支是否符合
-    if !config_branch_name.contains(&"*".to_string()) && !config_branch_name.contains(&request_branch_name) {
+    if &config_branch_name[0] != "" && !config_branch_name.contains(&"*".to_string()) && !config_branch_name.contains(&request_branch_name) {
         return HttpResponse::Ok().body("Branch not match");
     }
 
@@ -101,7 +97,7 @@ pub async fn webhooks_handle(req: HttpRequest, request_body_bytes: Bytes, query_
         match &query_info.command {
             Some(v) => {
                 commands = vec![v.replace("+", " ")];
-            },
+            }
             None => {
                 commands = vec![];
             }
