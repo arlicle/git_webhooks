@@ -40,22 +40,12 @@ impl Task {
         println!("command {:?}", command);
         let s: Vec<&str> = command.split(" ").collect();
 
-//        let mut echo_hello = Command::new(s[0]);
-
         let mut aaa = Command::new("pwd").output().unwrap();
         let request_body = std::str::from_utf8(&aaa.stdout).unwrap();
         println!("output: {}", request_body);
         let mut aaa = Command::new("git").arg("pull").current_dir("/www/hekou_bigdata").output().unwrap();
         let request_body = std::str::from_utf8(&aaa.stdout).unwrap();
         println!("output: {}", request_body);
-
-//        if s.len() > 1 {
-//            for arg in &s[1..] {
-//                echo_hello.arg(arg);
-//            }
-//        }
-//        let aaa = echo_hello.output().expect("failed to execute process");
-//        let request_body = std::str::from_utf8(&aaa.stdout).unwrap();
         println!("output: {}", request_body);
 
     }
