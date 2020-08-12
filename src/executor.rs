@@ -16,9 +16,9 @@ impl Task {
         thread::spawn(move || {
             for received_command in rx {
                 println!("received_command: {}", received_command);
-                thread::spawn(move || {
-                    Task::run_command(received_command);
-                });
+//                thread::spawn(move || {
+                Task::run_command(received_command);
+//                });
             }
         });
 
