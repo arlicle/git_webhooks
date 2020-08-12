@@ -65,13 +65,12 @@ pub async fn webhooks_handle(req: HttpRequest, request_body_bytes: Bytes, query_
     let config_branch_name = config_data.get_config_data(repository_name, "branch");
 
     // 获取当前请求的分支名称
-    let branch_url: &str = match request_body.pointer("/ref") {
-        Some(Value::String(v)) => v,
+    let request_branch_name = match request_body.pointer("/repository/default_branch") {
+        Some(Value::String(v)) => v.to_string(),
         Some(_) | None => {
             return HttpResponse::Ok().body("Cant not get branch name");
         }
     };
-    let request_branch_name = branch_url.replace("refs/heads/", "");
 
     // 判断分支是否符合
     if &config_branch_name[0] != "" && !config_branch_name.contains(&"*".to_string()) && !config_branch_name.contains(&request_branch_name) {
